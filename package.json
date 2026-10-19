@@ -1,0 +1,23 @@
+{
+  "name": "vis-course-rebuilt",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "《可视化导论》课程网站重构版 — 可检索、可追踪、可视化优先的学习工作台",
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "serve": "python3 -m http.server 8080",
+    "test:content": "node tests/content.mjs",
+    "test:i18n": "node tests/i18n.mjs",
+    "test:e2e": "node tests/e2e.mjs",
+    "test:viz": "node tests/viz.mjs",
+    "test:uat": "node tests/uat.mjs",
+    "test": "node tests/content.mjs && node tests/i18n.mjs && node tests/e2e.mjs && node tests/viz.mjs && node tests/uat.mjs",
+    "shots": "node tests/e2e.mjs --shots"
+  },
+  "devDependencies": {
+    "marked": "^12.0.2",
+    "playwright": "^1.49.1",
+    "prismjs": "^1.29.0"
+  }
+}

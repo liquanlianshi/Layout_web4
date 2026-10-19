@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-lang="zh" data-theme="paper">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>可视化导论 · 重构版 | Visualization, Rebuilt</title>
+<meta name="description" content="《可视化导论》课程网站重构版：5 章 27 节，全文检索、学习进度、知识地图，以及 20 个可交互的可视化实验。纯静态、离线可用。">
+<meta name="theme-color" content="#f6f2e9">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f6f2e9'/%3E%3Crect x='8' y='8' width='48' height='48' fill='none' stroke='%23bc4a24' stroke-width='1.5'/%3E%3Ctext x='32' y='43' font-family='serif' font-size='30' text-anchor='middle' fill='%231c1712'%3E视%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/layout.css">
+<link rel="stylesheet" href="assets/css/components.css">
+<link rel="stylesheet" href="assets/css/viz.css">
+</head>
+<body>
+<a class="skip-link" href="#view">跳到正文</a>
+
+<!-- 载入遮罩 -->
+<div class="boot" id="boot" aria-hidden="true">
+  <div class="boot__inner">
+    <div class="boot__mark">可视化导论</div>
+    <div class="boot__sub">VISUALIZATION · INTRODUCTION</div>
+    <div class="boot__bar"><i id="bootBar"></i></div>
+    <div class="boot__meta"><span id="bootLabel">正在装配课程</span><span id="bootPct">000</span></div>
+  </div>
+</div>
+
+<!-- 顶栏 -->
+<header class="topbar" id="topbar">
+  <div class="topbar__left">
+    <button class="iconbtn topbar__menu" id="btnMenu" aria-label="打开目录" title="目录">☰</button>
+    <a class="brand" href="#/" aria-label="返回课程首页">
+      <span class="brand__glyph" aria-hidden="true">视</span>
+      <span class="brand__text">
+        <b class="brand__name">可视化导论</b>
+        <i class="brand__sub">REBUILT · 学习版</i>
+      </span>
+    </a>
+    <nav class="crumbs" id="crumbs" aria-label="面包屑"></nav>
+  </div>
+
+  <div class="topbar__right">
+    <button class="searchbtn" id="btnSearch" aria-label="搜索课程">
+      <span class="searchbtn__icon" aria-hidden="true">⌕</span>
+      <span class="searchbtn__text" data-i18n="nav.searchPlaceholder">搜索章节、概念、代码…</span>
+      <kbd class="searchbtn__kbd">⌘K</kbd>
+    </button>
+    <nav class="topnav" aria-label="主导航">
+      <a class="topnav__link" href="#/map" data-i18n="nav.map">知识地图</a>
+      <a class="topnav__link" href="#/lab" data-i18n="nav.lab">实验室</a>
+      <a class="topnav__link" href="#/about" data-i18n="nav.about">重构说明</a>
+    </nav>
+    <div class="seg" id="themeSeg" role="group" aria-label="主题">
+      <button class="seg__btn is-on" data-theme-val="paper" data-i18n="common.paper">纸面</button>
+      <button class="seg__btn" data-theme-val="ink" data-i18n="common.ink">墨夜</button>
+    </div>
+    <div class="seg" id="langSeg" role="group" aria-label="语言">
+      <button class="seg__btn is-on" data-lang-val="zh">中</button>
+      <button class="seg__btn" data-lang-val="en">EN</button>
+    </div>
+  </div>
+  <div class="topbar__progress" id="topProgress" aria-hidden="true"><i></i></div>
+</header>
+
+<div class="shell" id="shell">
+  <!-- 侧栏：课程目录（阅读页显示） -->
+  <aside class="sidenav" id="sidenav" aria-label="课程目录">
+    <div class="sidenav__head">
+      <div>
+        <div class="sidenav__eyebrow" data-i18n="nav.course">课程目录</div>
+        <div class="sidenav__progress"><b id="sideDone">0</b><span>/</span><span id="sideTotal">27</span> <em data-i18n="common.sections">节</em></div>
+      </div>
+      <button class="iconbtn sidenav__close" id="btnCloseSide" aria-label="关闭目录">✕</button>
+    </div>
+    <div class="sidenav__bar"><i id="sideBar"></i></div>
+    <nav class="sidenav__body" id="sideNav"></nav>
+    <div class="sidenav__foot">
+      <a href="#/map" class="sidenav__maplink">
+        <span data-i18n="nav.map">知识地图</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+      <button class="sidenav__reset" id="btnResetProgress" data-i18n="common.resetProgress">重置进度</button>
+      <div class="sidenav__mobile">
+        <button class="btn btn--sm" id="mTheme" type="button">主题 · 纸面</button>
+        <button class="btn btn--sm" id="mLang" type="button">语言 · 中文</button>
+      </div>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim" hidden></div>
+
+  <!-- 主视图 -->
+  <main class="view" id="view" tabindex="-1"></main>
+</div>
+
+<footer class="footer" id="footer">
+  <div class="footer__inner">
+    <div class="footer__brand"><span class="brand__glyph brand__glyph--sm" aria-hidden="true">视</span> 可视化导论 · 重构版</div>
+    <div class="footer__meta">
+      <span>5 <span data-i18n="common.chapters">章</span> · 27 <span data-i18n="common.sections">节</span> · 20 <span data-i18n="common.interactive">个交互图</span></span>
+      <span>纯静态 · 离线可用 · 无跟踪</span>
+    </div>
+    <div class="footer__links">
+      <a href="#/about" data-i18n="nav.about">重构说明</a>
+      <a href="https://cinger007.github.io/vis/" target="_blank" rel="noopener">原课程站点 ↗</a>
+    </div>
+  </div>
+</footer>
+
+<!-- 搜索面板 -->
+<div class="palette" id="palette" hidden>
+  <div class="palette__scrim" data-close-palette></div>
+  <div class="palette__panel" role="dialog" aria-modal="true" aria-label="搜索">
+    <div class="palette__head">
+      <span class="palette__icon" aria-hidden="true">⌕</span>
+      <input class="palette__input" id="paletteInput" type="search" autocomplete="off" spellcheck="false" placeholder="搜索章节、概念、代码…" aria-label="搜索">
+      <button class="iconbtn" data-close-palette aria-label="关闭">✕</button>
+    </div>
+    <div class="palette__hint" id="paletteHint"></div>
+    <div class="palette__results" id="paletteResults" role="listbox"></div>
+    <div class="palette__foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> 选择</span>
+      <span><kbd>↵</kbd> 打开</span>
+      <span><kbd>esc</kbd> 关闭</span>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<div class="viz-tip" id="vizTip" role="tooltip" aria-hidden="true"></div>
+
+<script src="assets/vendor/d3.min.js"></script>
+<script src="assets/vendor/prism-core.min.js"></script>
+<script src="assets/vendor/prism-markup.min.js"></script>
+<script src="assets/vendor/prism-clike.min.js"></script>
+<script src="assets/vendor/prism-javascript.min.js"></script>
+<script src="assets/vendor/prism-css.min.js"></script>
+<script src="assets/vendor/prism-json.min.js"></script>
+<script src="assets/vendor/prism-bash.min.js"></script>
+<script src="data/course.js"></script>
+<script src="data/datasets.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/ui.js"></script>
+<script src="assets/js/viz/core.js"></script>
+<script src="assets/js/viz/dikw.js"></script>
+<script src="assets/js/viz/dataflow.js"></script>
+<script src="assets/js/viz/scales.js"></script>
+<script src="assets/js/viz/arrayops.js"></script>
+<script src="assets/js/viz/datajoin.js"></script>
+<script src="assets/js/viz/pipeline.js"></script>
+<script src="assets/js/viz/rollup.js"></script>
+<script src="assets/js/viz/tree.js"></script>
+<script src="assets/js/viz/events.js"></script>
+<script src="assets/js/viz/color.js"></script>
+<script src="assets/js/viz/widelong.js"></script>
+<script src="assets/js/viz/spaces.js"></script>
+<script src="assets/js/viz/curves.js"></script>
+<script src="assets/js/viz/slope.js"></script>
+<script src="assets/js/viz/marching.js"></script>
+<script src="assets/js/viz/time.js"></script>
+<script src="assets/js/viz/storyline.js"></script>
+<script src="assets/js/viz/extra.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
